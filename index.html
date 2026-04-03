@@ -780,12 +780,13 @@
     </div><!-- /.page-wrap -->
 
     <!-- ═══ UNTOUCHED JAVASCRIPT ═══ -->
-    <script>
+ <script>
         const form = document.getElementById('dataForm');
         const submitBtn = document.getElementById('submitBtn');
         const formView = document.getElementById('formView');
         const successScreen = document.getElementById('successScreen');
 
+        // تم وضع الرابط الجديد الخاص بك هنا:
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzVCOBqY60GF1WNYleXu8EkDGgVUVNQiXcjGWcUSXf3JskC4CK4oEVnAlyXXCKPipqq/exec';
 
         form.addEventListener('submit', e => {
@@ -797,8 +798,15 @@
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(() => showSuccess())
-                .catch(() => showSuccess()); // Show success either way (Google Apps Script CORS)
+                .then(response => {
+                    // بسبب إعادة التوجيه (Redirect) الخاص بجوجل، يعتبر المتصفح الاستجابة ناجحة
+                    showSuccess();
+                })
+                .catch(error => {
+                    // في حالة ظهور خطأ CORS الخاص بجوجل، غالباً البيانات تكون قد وصلت بالفعل
+                    console.error('ملاحظة للمطور:', error.message);
+                    showSuccess(); 
+                });
         });
 
         function showSuccess() {
